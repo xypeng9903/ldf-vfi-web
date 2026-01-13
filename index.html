@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+    content="Towards Holistic Modeling for Video Frame Interpolation with Auto-regressive Diffusion Transformers (LDF-VFI)">
+  <meta name="keywords"
+    content="video frame interpolation, diffusion transformer, auto-regressive, temporal consistency, LDF-VFI">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Towards Holistic Modeling for Video Frame Interpolation with Auto-regressive Diffusion Transformers</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+  <script src="./static/js/video_comparison.js"></script>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎥</text></svg>">
+</head>
+
+<body>
+
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">Towards Holistic Modeling for Video Frame Interpolation with
+              Auto-regressive Diffusion Transformers</h1>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">Xinyu Peng<sup>1</sup>*</span>,&nbsp;
+              <span class="author-block">Han Li<sup>1</sup>*</span>,&nbsp;
+              <span class="author-block">Yuyang Huang<sup>1</sup></span>,&nbsp;
+              <span class="author-block">Ziyang Zheng<sup>1</sup></span>,&nbsp;
+              <span class="author-block">Yaoming Wang<sup>2</sup></span>,&nbsp;
+              <br>
+              <span class="author-block">Xin Chen<sup>2</sup></span>,&nbsp;
+              <span class="author-block">Wenrui Dai<sup>1</sup></span>,&nbsp;
+              <span class="author-block">Chenglin Li<sup>1</sup></span>,&nbsp;
+              <span class="author-block">Junni Zou<sup>1</sup></span>,&nbsp;
+              <span class="author-block">Hongkai Xiong<sup>1</sup></span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <span class="author-block"><sup>1</sup>Shanghai Jiao Tong University</span>,&nbsp;
+              <span class="author-block"><sup>2</sup>Meituan</span>
+            </div>
+            <div class="is-size-6">
+              <small>* Equal contribution</small>
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <!-- arXiv Link. -->
+                <span class="link-block">
+                  <a href="#" class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                    </span>
+                    <span>arXiv (Soon)</span>
+                  </a>
+                </span>
+                <!-- Code Link. -->
+                <span class="link-block">
+                  <a href="https://github.com/xypeng9903/LDF-VFI"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="fab fa-github"></i>
+                    </span>
+                    <span>Code</span>
+                  </a>
+                </span>
+                <!-- Hugging Face Link. -->
+                <span class="link-block">
+                  <a href="https://huggingface.co/onecat-ai/LDF-VFI"
+                    class="external-link button is-normal is-rounded is-dark">
+                    <span class="icon">
+                      <i class="ai ai-open-access"></i>
+                    </span>
+                    <span>Hugging Face</span>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <!-- Video Container - Wider -->
+    <div class="container is-max-desktop">
+      <div class="columns is-centered is-variable is-1" style="align-items: center;">
+        <div class="column is-narrow" style="display: flex; justify-content: center;">
+          <div class="content">
+            <video id="dollyzoom" autoplay controls muted loop playsinline style="height: 400px; width: auto;">
+              <source src="./static/0_banner/case0007-16x.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <div class="column is-narrow" style="display: flex; justify-content: center;">
+          <div class="content">
+            <video id="dollyzoom" autoplay controls muted loop playsinline style="height: 400px; width: auto;">
+              <source src="./static/0_banner/case0013-16x.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+        <div class="column is-narrow" style="display: flex; justify-content: center;">
+          <div class="content">
+            <video id="dollyzoom" autoplay controls muted loop playsinline style="height: 400px; width: auto;">
+              <source src="./static/0_banner/case0018-16x.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Text Container - Standard Width -->
+    <div class="container is-max-desktop">
+      <div class="content has-text-justified">
+        <p>
+          <b>LDF-VFI</b> employs holistic modeling for generative video frame interpolation (VFI), enabling stable handling of large and complex motion scenarios. We present input videos (up) and 16X VFI results by LDF-VFI (down) on SNU-FILM dataset. 
+        </p>
+      </div>
+
+      <br>
+      
+      <!-- Abstract. -->
+      <h2 class="title is-3">Abstract</h2>
+      <div class="content has-text-justified">
+        <p>
+          <font size=5>E</font>xisting video frame interpolation (VFI) methods typically follow a frame-centric
+          paradigm, processing videos as short, independent segments (e.g., triplets). This often leads to temporal
+          inconsistencies and motion artifacts, especially for long sequences with large motion. We propose a
+          holistic, video-centric framework named <b>L</b>ocal <b>D</b>iffusion <b>F</b>orcing for <b>V</b>ideo
+          <b>F</b>rame <b>I</b>nterpolation (LDF-VFI), which models the entire video sequence to ensure long-range
+          temporal coherence.
+        </p>
+        <p>
+          Our approach is built upon an auto-regressive diffusion transformer that synthesizes all frames in a
+          temporal chunk jointly, and then connects chunks in an auto-regressive manner. To mitigate error
+          accumulation during auto-regressive inference, we introduce a skip-concatenate sampling strategy that
+          periodically resets and reconnects context, leading to stable generation over long sequences. Furthermore,
+          LDF-VFI combines sparse, local attention with tiled VAE encoding to efficiently support high resolutions
+          (e.g., 4K) without retraining, and employs a conditional VAE decoder that leverages multi-scale features
+          from the input low-frame-rate video to improve reconstruction fidelity.
+        </p>
+        <p>
+          Empirically, LDF-VFI achieves state-of-the-art performance on challenging long-sequence benchmarks,
+          demonstrating superior per-frame quality and temporal consistency compared with both optical-flow-based and
+          diffusion-based VFI baselines.
+        </p>
+      </div>
+      <!--/ Abstract. -->
+    </div>
+  </section>
+  <hr />
+  <section class="section">
+    <div class="container is-max-desktop">
+
+
+      <div class="content">
+
+        <h3 class="title is-4">Handling challenging large motion</h3>
+        <div class="content has-text-justified">
+          In scenarios featuring large and complex motion, LDF-VFI significantly mitigates
+          common artifacts such as ghosting and blurring. We compare LDF-VFI against representative state-of-the-art VFI approaches, 
+        <a href="https://github.com/MCG-NJU/EMA-VFI">EMA-VFI</a> and
+        <a href="https://github.com/srcn-ivl/UPR-Net">BiM-VFI</a>. Compared to baseline methods, it produces sharper details and
+          maintains more natural temporal dynamics.
+        </div>
+
+        <!-- First video comparision container -->
+        <div class="videocomparison-container">
+          <div class="videocomparison-info" data-path="static/2_large_motion"></div>
+          <div class="videocomparison-images">
+            <video class="demo-video" controls muted loop style="height: 600px; width: 100%; object-fit: contain;"></video>
+          </div>
+          
+          <div class="thumbnail-bar">
+            <button class="left-arrow">◀︎</button>
+            <div class="thumbnails-wrapper">
+              <div class="thumbnails">
+                <video class="thumbnail" data-video="0012.mp4" controlsList="nodownload" muted loop preload="auto">
+                  <source src="static/2_large_motion/0012.mp4" type="video/mp4">
+                </video>
+                <video class="thumbnail" data-video="0018.mp4" controlsList="nodownload" muted loop preload="auto">
+                  <source src="static/2_large_motion/0018.mp4" type="video/mp4">
+                </video>
+                <video class="thumbnail" data-video="0013.mp4" controlsList="nodownload" muted loop preload="auto">
+                  <source src="static/2_large_motion/0013.mp4" type="video/mp4">
+                </video>
+                <video class="thumbnail" data-video="0002.mp4" controlsList="nodownload" muted loop preload="auto">
+                  <source src="static/2_large_motion/0002.mp4" type="video/mp4">
+                </video>
+                <video class="thumbnail" data-video="0004.mp4" controlsList="nodownload" muted loop preload="auto">
+                  <source src="static/2_large_motion/0004.mp4" type="video/mp4">
+                </video>
+                <video class="thumbnail" data-video="0005.mp4" controlsList="nodownload" muted loop preload="auto">
+                  <source src="static/2_large_motion/0005.mp4" type="video/mp4">
+                </video>
+                <video class="thumbnail" data-video="0006.mp4" controlsList="nodownload" muted loop preload="auto">
+                  <source src="static/2_large_motion/0006.mp4" type="video/mp4">
+                </video>
+                <video class="thumbnail" data-video="0007.mp4" controlsList="nodownload" muted loop preload="auto">
+                  <source src="static/2_large_motion/0007.mp4" type="video/mp4">
+                </video>
+                <video class="thumbnail" data-video="0015.mp4" controlsList="nodownload" muted loop preload="auto">
+                  <source src="static/2_large_motion/0015.mp4" type="video/mp4">
+                </video>
+              </div>
+            </div>
+            <button class="right-arrow">▶︎</button>
+          </div>
+        </div>
+        <!-- First video comparision container -->
+
+        <!-- Second video comparision container -->
+        <!-- <div class="videocomparison-container">
+          <div class="videocomparison-info" data-path="static/video_comparision/lamor_x2"></div>
+          <div class="videocomparison-images">
+            <video class="demo-video" controls muted loop></video>
+          </div>
+          <div class="thumbnail-bar">
+            <button class="left-arrow">◀︎</button>
+            <div class="thumbnails-wrapper">
+              <div class="thumbnails">
+                <video class="thumbnail" controlsList="nodownload" muted loop>
+                  <source src="static/video_comparision/lamor_x2/000_gt_thumbnail.mp4" type="video/mp4">
+                </video>
+                <video class="thumbnail" controlsList="nodownload" muted loop>
+                  <source src="static/video_comparision/lamor_x2/001_gt_thumbnail.mp4" type="video/mp4">
+                </video>
+                <video class="thumbnail" controlsList="nodownload" muted loop>
+                  <source src="static/video_comparision/lamor_x2/002_gt_thumbnail.mp4" type="video/mp4">
+                </video>
+                <video class="thumbnail" controlsList="nodownload" muted loop>
+                  <source src="static/video_comparision/lamor_x2/003_gt_thumbnail.mp4" type="video/mp4">
+                </video>
+                <video class="thumbnail" controlsList="nodownload" muted loop>
+                  <source src="static/video_comparision/lamor_x2/004_gt_thumbnail.mp4" type="video/mp4">
+                </video>
+                <video class="thumbnail" controlsList="nodownload" muted loop>
+                  <source src="static/video_comparision/lamor_x2/005_gt_thumbnail.mp4" type="video/mp4">
+                </video>
+                <video class="thumbnail" controlsList="nodownload" muted loop>
+                  <source src="static/video_comparision/lamor_x2/006_gt_thumbnail.mp4" type="video/mp4">
+                </video>
+              </div>
+            </div>
+            <button class="right-arrow">▶︎</button>
+          </div>
+        </div> -->
+        <!-- Second video comparision container -->
+
+      </div>
+      <div style="height: 10px;"></div> <br>
+      <div class="content" id="hr-section">
+        <h3 class="title is-4">High-resolution capability</h3>
+        <div class="content has-text-justified">
+          Leveraging sparse local attention and tiled VAE encoding, LDF-VFI efficiently scales to high-resolution inputs
+          (e.g., 4K) with manageable computational requirements. The model demonstrates robust generalization to resolutions
+          beyond its training distribution without requiring retraining.
+        </div>
+
+        <!-- Toggle Switch UI -->
+        <div class="columns is-centered is-vcentered" style="margin-bottom: 2rem;">
+          <div class="column is-narrow"><span class="is-size-5">Input</span></div>
+          <div class="column is-narrow">
+            <label class="hr-switch">
+              <input type="checkbox" id="hr-toggle" checked>
+              <span class="hr-slider"></span>
+            </label>
+          </div>
+          <div class="column is-narrow"><span class="is-size-5">LDF-VFI</span></div>
+        </div>
+
+        <div class="columns is-centered">
+          <div class="column is-12" id="hr-video-container" style="position: relative;">
+            <video id="hr-video" controls muted loop playsinline style="width: 100%; height: auto;">
+              <source src="static/3_high_resolution/Type1/TEST01_003_f0433/pred.mp4" type="video/mp4">
+            </video>
+          </div>
+        </div>
+
+        <div class="thumbnail-bar">
+          <button class="left-arrow">◀︎</button>
+          <div class="thumbnails-wrapper">
+            <div class="hr-thumbnails" id="hr-case-list">
+              <video class="hr-thumbnail active" data-type="Type1" data-case="TEST01_003_f0433" muted preload="metadata">
+                <source src="static/3_high_resolution/Type1/TEST01_003_f0433/lq.mp4" type="video/mp4">
+              </video>
+              <video class="hr-thumbnail" data-type="Type1" data-case="TEST02_045_f0465" muted preload="metadata">
+                <source src="static/3_high_resolution/Type1/TEST02_045_f0465/lq.mp4" type="video/mp4">
+              </video>
+              <video class="hr-thumbnail" data-type="Type1" data-case="TEST03_081_f4833" muted preload="metadata">
+                <source src="static/3_high_resolution/Type1/TEST03_081_f4833/lq.mp4" type="video/mp4">
+              </video>
+              <video class="hr-thumbnail" data-type="Type1" data-case="TEST04_140_f3889" muted preload="metadata">
+                <source src="static/3_high_resolution/Type1/TEST04_140_f3889/lq.mp4" type="video/mp4">
+              </video>
+              <video class="hr-thumbnail" data-type="Type1" data-case="TEST05_158_f0321" muted preload="metadata">
+                <source src="static/3_high_resolution/Type1/TEST05_158_f0321/lq.mp4" type="video/mp4">
+              </video>
+              <video class="hr-thumbnail" data-type="Type2" data-case="TEST06_001_f0273" muted preload="metadata">
+                <source src="static/3_high_resolution/Type2/TEST06_001_f0273/lq.mp4" type="video/mp4">
+              </video>
+              <video class="hr-thumbnail" data-type="Type2" data-case="TEST07_076_f1889" muted preload="metadata">
+                <source src="static/3_high_resolution/Type2/TEST07_076_f1889/lq.mp4" type="video/mp4">
+              </video>
+              <video class="hr-thumbnail" data-type="Type2" data-case="TEST08_079_f0321" muted preload="metadata">
+                <source src="static/3_high_resolution/Type2/TEST08_079_f0321/lq.mp4" type="video/mp4">
+              </video>
+              <video class="hr-thumbnail" data-type="Type2" data-case="TEST09_112_f0177" muted preload="metadata">
+                <source src="static/3_high_resolution/Type2/TEST09_112_f0177/lq.mp4" type="video/mp4">
+              </video>
+              <video class="hr-thumbnail" data-type="Type2" data-case="TEST10_172_f1905" muted preload="metadata">
+                <source src="static/3_high_resolution/Type2/TEST10_172_f1905/lq.mp4" type="video/mp4">
+              </video>
+              <video class="hr-thumbnail" data-type="Type3" data-case="TEST11_078_f4977" muted preload="metadata">
+                <source src="static/3_high_resolution/Type3/TEST11_078_f4977/lq.mp4" type="video/mp4">
+              </video>
+              <video class="hr-thumbnail" data-type="Type3" data-case="TEST12_087_f2721" muted preload="metadata">
+                <source src="static/3_high_resolution/Type3/TEST12_087_f2721/lq.mp4" type="video/mp4">
+              </video>
+              <video class="hr-thumbnail" data-type="Type3" data-case="TEST13_133_f4593" muted preload="metadata">
+                <source src="static/3_high_resolution/Type3/TEST13_133_f4593/lq.mp4" type="video/mp4">
+              </video>
+              <video class="hr-thumbnail" data-type="Type3" data-case="TEST14_146_f1761" muted preload="metadata">
+                <source src="static/3_high_resolution/Type3/TEST14_146_f1761/lq.mp4" type="video/mp4">
+              </video>
+              <video class="hr-thumbnail" data-type="Type3" data-case="TEST15_148_f0465" muted preload="metadata">
+                <source src="static/3_high_resolution/Type3/TEST15_148_f0465/lq.mp4" type="video/mp4">
+              </video>
+            </div>
+          </div>
+          <button class="right-arrow">▶︎</button>
+        </div>
+
+        <script>
+          document.addEventListener('DOMContentLoaded', () => {
+            const hrSection = document.getElementById('hr-section');
+            const video = document.getElementById('hr-video');
+            const toggle = document.getElementById('hr-toggle');
+            const thumbs = hrSection.querySelectorAll('.hr-thumbnail');
+            const leftArrow = hrSection.querySelector('.left-arrow');
+            const rightArrow = hrSection.querySelector('.right-arrow');
+            const thumbBar = document.getElementById('hr-case-list');
+            const wrapper = hrSection.querySelector('.thumbnails-wrapper');
+            
+            let currentIndex = 0;
+
+            function updateHRVideo() {
+              const activeThumb = thumbs[currentIndex];
+              if (!activeThumb) return;
+              
+              const type = activeThumb.dataset.type;
+              const caseName = activeThumb.dataset.case;
+              const isPred = toggle.checked;
+              const source = `static/3_high_resolution/${type}/${caseName}/${isPred ? 'pred.mp4' : 'lq.mp4'}`;
+              
+              const currentTime = video.currentTime;
+              const wasPlaying = !video.paused;
+
+              // Lock current height to prevent jump
+              video.style.height = video.offsetHeight + "px";
+              video.style.opacity = 0.5; // Dim slightly instead of full hide
+
+              video.src = source;
+              
+              // Use loadedmetadata instead of loadeddata for dimensions
+              video.onloadedmetadata = () => {
+                video.currentTime = currentTime;
+                if (wasPlaying) video.play();
+                video.style.height = "auto";
+                video.style.opacity = 1;
+              };
+
+              // Update thumbnails and scroll (same as before)
+              thumbs.forEach(t => t.classList.remove('active'));
+              activeThumb.classList.add('active');
+              
+              const wrapperWidth = wrapper.offsetWidth;
+              const thumbWidth = activeThumb.offsetWidth;
+              const thumbCenter = activeThumb.offsetLeft + thumbWidth / 2;
+              const offset = (wrapperWidth / 2) - thumbCenter;
+              thumbBar.style.transform = `translateX(${offset}px)`;
+            }
+
+            toggle.addEventListener('change', updateHRVideo);
+            
+            thumbs.forEach((thumb, index) => {
+              thumb.addEventListener('click', () => {
+                currentIndex = index;
+                updateHRVideo();
+              });
+            });
+
+            if (leftArrow) {
+              leftArrow.addEventListener('click', () => {
+                currentIndex = (currentIndex - 1 + thumbs.length) % thumbs.length;
+                updateHRVideo();
+              });
+            }
+
+            if (rightArrow) {
+              rightArrow.addEventListener('click', () => {
+                currentIndex = (currentIndex + 1) % thumbs.length;
+                updateHRVideo();
+              });
+            }
+
+            // Initial alignment
+            setTimeout(() => {
+              const activeThumb = thumbs[currentIndex];
+              if (!activeThumb) return;
+              const wrapperWidth = wrapper.offsetWidth;
+              const thumbWidth = activeThumb.offsetWidth;
+              const thumbCenter = activeThumb.offsetLeft + thumbWidth / 2;
+              const offset = (wrapperWidth / 2) - thumbCenter;
+              thumbBar.style.transform = `translateX(${offset}px)`;
+            }, 500);
+          });
+        </script>
+
+        <style>
+          .hr-switch { position: relative; display: inline-block; width: 60px; height: 30px; }
+          .hr-switch input { opacity: 0; width: 0; height: 0; }
+          .hr-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 30px; }
+          .hr-slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+          input:checked + .hr-slider { background-color: #3273dc; }
+          input:checked + .hr-slider:before { transform: translateX(30px); }
+          
+          #hr-video { transition: opacity 0.2s ease-in-out; }
+        </style>
+      </div>
+
+    </div>
+  </section>
+
+  <hr />
+
+  <section class="section">
+    <div class="container is-max-desktop content">
+      <h2 class="title">Methodology</h2>
+
+      <h3 class="title is-4">Holistic modeling for VFI</h3>
+      <div class="content">
+        <div class="columns is-vcentered is-multiline">
+          <div class="column is-full-mobile is-half-tablet">
+            <div class="content has-text-justified">
+              <p>
+                Traditional VFI methods typically interpolate frames in isolation (e.g., predicting a single
+                intermediate frame from a triplet), often neglecting long-term temporal dependencies. In contrast,
+                LDF-VFI adopts a holistic, video-centric paradigm. By modeling the entire high-frame-rate video sequence
+                conditioned on the complete low-frame-rate input, our approach explicitly captures temporal correlations
+                across all interpolated frames and leveraging more input information.
+              </p>
+            </div>
+          </div>
+          <div class="column is-full-mobile is-half-tablet has-text-centered">
+            <img src="./static/image/method/overview.png" alt="Overview of holistic video-centric VFI"
+              style="max-width:80%; height:auto;" />
+          </div>
+        </div>
+      </div>
+
+      <h3 class="title is-4">Model architecture</h3>
+      <img class="network-architecture-fig-large" src="./static/image/method/arch.png" alt="LDF-VFI architecture" />
+      <div style="height: 10px;"></div>
+      <div class="content has-text-justified">
+        <p>
+          Our architecture is built upon a 3D Diffusion Transformer (DiT) optimized for video generation. Inputs are encoded into a compact
+          latent space using a spatially tiled and temporally non-overlapping VAE encoder, which ensures constant memory usage and discrete temporal units for auto-regressive processing.
+        </p>
+        <p>
+          To efficiently handle high-resolution videos (e.g., 4K), we employ a hybrid <strong>sparse attention
+          mechanism</strong>: chunk-based sliding window attention in
+          the spatial dimension to reduce computational complexity, and full attention in the temporal
+          dimension to capture complex, non-local motion dynamics. This design allows the model to scale to high
+          resolutions while maintaining strong temporal modeling capabilities.
+        </p>
+      </div>
+
+      <div class="content" style="margin-top: 1.5rem;">
+        <div class="columns is-vcentered is-multiline">
+          <div class="column is-full-mobile is-half-tablet">
+            <div class="content has-text-justified">
+              <p>
+                To enhance reconstruction quality, we design a <strong>conditional VAE decoder</strong>. A dedicated conditional encoder extracts multi-scale spatio-temporal features from the
+                LQ video. These features are injected into the VAE decoder through
+                zero-initialized convolutional layers similar to ControlNet, providing fine-grained guidance to preserve the
+                original details and textures of the input frames.
+              </p>
+            </div>
+          </div>
+          <div class="column is-full-mobile is-half-tablet has-text-centered">
+            <img src="./static/image/method/decoder.png" alt="LDF-VFI decoder architecture"
+              style="max-width:95%; height:auto;" />
+          </div>
+        </div>
+      </div>
+
+      <h3 class="title is-4">Auto-regressive inference</h3>
+      <div class="content has-text-justified">
+        <div class="has-text-centered">
+          <img src="./static/image/method/skip-concatenate-vs-causal.png"
+            alt="Skip-concatenate vs. causal auto-regressive inference"
+            style="max-width:90%; height:auto; margin-bottom:1rem;" />
+        </div>
+        <p>
+          To handle videos of arbitrary length, LDF-VFI generates temporal chunks auto-regressively. During training, we
+          employ a chunk-level diffusion-forcing strategy, teaching the model to synthesize the current chunk
+          conditioned on previously generated context.
+        </p>
+        <p>
+          For inference, we introduce a <strong>skip-concatenate sampling</strong> scheme to mitigate error accumulation. The model
+          periodically generates a "skip" chunk independent of immediate predictions, followed by a "concatenate" chunk
+          that bridges the timeline using both the skip chunk and earlier context. This strategy effectively bounds
+          long-term error propagation while preserving smooth and coherent motion dynamics.
+        </p>
+
+        <!-- Fourth video comparision container -->
+        <div class="content has-text-centered">
+          <video class="demo-video" controls muted loop style="width: 60%;" preload="metadata">
+            <source src="static/1_long_duration/0014.mp4" type="video/mp4">
+          </video>
+        </div>
+        <p class="has-text-centered is-size-6">
+          LDF-VFI maintains temporal consistency over long durations by employing a skip-concatenate sampling strategy, which effectively prevents error accumulation and drifting in auto-regressive inference. We present a generated video by our method over 2000 frames. Top: input video. Down: generated video by LDF-VFI.
+        </p>
+        <!-- Fourth video comparision container -->
+      </div>
+
+    </div>
+  </section>
+
+  <hr />
+
+  <!--   <section class="section">
+    <div class="container is-max-desktop content">
+      <h2 class="title">Acknowledgements</h2>
+      <p>
+        Thanks to ...
+        <font color="red"> Todo - edit </font>
+      </p>
+    </div>
+  </section> -->
+
+  <!-- <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>@inproceedings{peng2026ldfvfi,
+  title     = {Towards Holistic Modeling for Video Frame Interpolation with Auto-regressive Diffusion Transformers},
+  author    = {Peng, Xinyu and Li, Han and Huang, Yuyang and Zheng, Ziyang and Wang, Yaoming and Chen, Xin and Dai, Wenrui and Li, Chenglin and Zou, Junni and Xiong, Hongkai},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year      = {2026},
+}</code></pre>
+    </div>
+  </section> -->
+
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+          <div class="content">
+            <p>
+              The original template is from <a href="https://nerfies.github.io/">Nerfies</a>.
+            </p>
+          </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>

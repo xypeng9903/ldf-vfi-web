@@ -1,0 +1,264 @@
+body {
+  font-family: 'Noto Sans', sans-serif;
+}
+
+section.hero {
+  margin-bottom: -50px;
+}
+
+section.section {
+  margin-top: -20px;
+  margin-bottom: -20px;
+}
+
+.footer .icon-link {
+    font-size: 25px;
+    color: #000;
+}
+
+.link-block a {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.teaser .hero-body {
+  padding-top: 0;
+  padding-bottom: 3rem;
+}
+
+.teaser {
+  font-family: 'Google Sans', sans-serif;
+}
+
+.zoom-container .column {
+  padding: 0;
+  font-size: 0;
+  background: #000;
+}
+
+.zoom-container canvas {
+  width: 100%;
+}
+
+.zoom-gt-container {
+  padding: 0;
+  border: 1px solid #000;
+}
+
+.zoom-gt-img {
+  display: true;
+}
+
+.zoom-lens {
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  border-right: 1px solid #000;
+  border-bottom: 1px solid #000;
+}
+
+.zoom-lens:first-child {
+  border-top: 1px solid #000;
+}
+
+.publication-title {
+}
+
+.publication-banner {
+  max-height: parent;
+
+}
+
+.publication-banner video {
+  position: relative;
+  left: auto;
+  top: auto;
+  transform: none;
+  object-fit: fit;
+}
+
+.publication-header .hero-body {
+}
+
+.publication-title {
+    font-family: 'Google Sans', sans-serif;
+}
+
+.publication-authors {
+    font-family: 'Google Sans', sans-serif;
+}
+
+.publication-venue {
+    margin-top: 0.5em;
+    font-family: 'Google Sans', sans-serif;
+}
+
+.publication-awards {
+    color: #ff3860;
+    width: fit-content;
+    font-weight: bolder;
+}
+
+.publication-authors {
+}
+
+.publication-authors a {
+   color: hsl(204, 86%, 53%) !important;
+}
+
+.publication-authors a:hover {
+    text-decoration: underline;
+}
+
+.author-block {
+  display: inline-block;
+}
+
+.publication-banner img {
+}
+
+.publication-authors {
+  /*color: #4286f4;*/
+}
+
+.publication-video {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%;
+
+    overflow: hidden;
+    border-radius: 10px !important;
+}
+
+.publication-video iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.publication-body img {
+}
+
+
+/* video comparison tool begins */
+
+.videocomparison-container {
+    text-align: center;
+    max-width: 1000px;
+    margin: 20px 0;
+}
+
+.videocomparison-images {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%; /* Adjust the width as needed */
+  height: auto; /* Adjust the height as needed */
+}
+
+.demo-video, #hr-video, #dollyzoom {
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  background: #000;
+}
+
+.demo-video {
+  width: 100%; /* Video fills the entire container width */
+  height: auto; /* Height adjusts automatically to maintain aspect ratio */
+  object-fit: contain; 
+  transition: opacity 0.2s ease-in-out;
+  opacity: 1;
+}
+
+.demo-video.fade-out {
+  opacity: 0;
+}
+
+
+.thumbnail-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.thumbnails-wrapper {
+    overflow: hidden;
+    width: 450px;
+    margin: 0 10px;
+    padding: 10px 0;
+}
+
+.thumbnails, .hr-thumbnails {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    transition: transform 0.3s ease;
+    position: relative;
+    padding: 5px 0;
+}
+
+.thumbnail, .hr-thumbnail {
+    width: 120px;
+    height: 80px;
+    object-fit: cover;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+    margin: 0 5px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    padding: 0; /* Remove old padding */
+}
+
+.thumbnail.selected, .thumbnail.active, .hr-thumbnail.active {
+    opacity: 1;
+    border-color: #3273dc;
+    transform: scale(1.05);
+}
+
+.thumbnail:hover, .hr-thumbnail:hover {
+    opacity: 1;
+}
+
+.left-arrow, .right-arrow {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #3273dc;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: color 0.2s;
+}
+
+.left-arrow:hover, .right-arrow:hover {
+    color: #234d9b;
+    background: none;
+}
+
+/* video comparison tool ends */
+
+.network-architecture-fig-base {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+}
+
+.network-architecture-fig-pyramid {
+/*  height: 400px;*/
+  margin-right: 40px;
+  width: 45%;
+}
+
+.network-architecture-image-text-container {
+  display: flex; 
+  align-items: center; /* Vertically center the image and text */
+}
